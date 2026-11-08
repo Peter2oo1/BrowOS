@@ -9,6 +9,19 @@
 		"48": "icons/browos-logo.png",
 		"128": "icons/browos-logo.png"
 	},
+	"action": {
+		"default_title": "Open BrowOS",
+		"default_icon": {
+			"16": "icons/browos-logo.png",
+			"32": "icons/browos-logo.png",
+			"48": "icons/browos-logo.png",
+			"128": "icons/browos-logo.png"
+		}
+	},
+	"background": {
+		"service_worker": "background.js",
+		"scripts": ["background.js"]
+	},
 	"chrome_url_overrides": {
 		"newtab": "index.html"
 	},
