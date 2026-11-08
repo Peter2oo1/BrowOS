@@ -18,7 +18,7 @@ function floatingAppId(windowId) {
 // the BrowOS desktop on the screen (the page, minus the taskbar)
 
 async function browosArea() {
-	const main = await chrome.windows.getCurrent();
+	const main = await browser.windows.getCurrent();
 
 	const border = Math.max(0, Math.round((window.outerWidth - window.innerWidth) / 2));
 
@@ -70,7 +70,7 @@ async function openFloatingWindow(app) {
 
 	if (floatingWindows[app.id]) {
 		try {
-			await chrome.windows.update(floatingWindows[app.id], {
+			await browser.windows.update(floatingWindows[app.id], {
 				state: "normal",
 				focused: true,
 			});
@@ -87,7 +87,7 @@ async function openFloatingWindow(app) {
 
 	const height = Math.min(800, area.height - 40);
 
-	const created = await chrome.windows.create({
+	const created = await browser.windows.create({
 		url: app.url,
 		type: "popup",
 		left: Math.round(area.left + (area.width - width) / 2),
@@ -103,7 +103,7 @@ async function openFloatingWindow(app) {
 
 function closeFloatingWindow(appId) {
 	if (floatingWindows[appId]) {
-		chrome.windows.remove(floatingWindows[appId]).catch(function () {});
+		browser.windows.remove(floatingWindows[appId]).catch(function () {});
 	}
 }
 
@@ -122,7 +122,7 @@ async function keepInside(windowId) {
 	let floating;
 
 	try {
-		floating = await chrome.windows.get(windowId);
+		floating = await browser.windows.get(windowId);
 	} catch (error) {
 		return;
 	}
@@ -162,10 +162,10 @@ async function keepInside(windowId) {
 
 	ignoreBoundsUntil[windowId] = Date.now() + 800;
 
-	chrome.windows.update(windowId, update).catch(function () {});
+	browser.windows.update(windowId, update).catch(function () {});
 }
 
-chrome.windows.onBoundsChanged.addListener(async function (changed) {
+browser.windows.onBoundsChanged.addListener(async function (changed) {
 	// BrowOS itself moved: the floating windows follow (position only)
 
 	if (changed.id === mainWindowId) {
@@ -183,7 +183,7 @@ chrome.windows.onBoundsChanged.addListener(async function (changed) {
 
 		for (const windowId of Object.values(floatingWindows)) {
 			try {
-				const floating = await chrome.windows.get(windowId);
+				const floating = await browser.windows.get(windowId);
 
 				if (floating.state !== "normal") {
 					continue;
@@ -191,7 +191,7 @@ chrome.windows.onBoundsChanged.addListener(async function (changed) {
 
 				ignoreBoundsUntil[windowId] = Date.now() + 800;
 
-				await chrome.windows.update(windowId, {
+				await browser.windows.update(windowId, {
 					left: floating.left + dx,
 					top: floating.top + dy,
 				});
@@ -238,7 +238,7 @@ setInterval(async function () {
 	let main;
 
 	try {
-		main = await chrome.windows.get(mainWindowId);
+		main = await browser.windows.get(mainWindowId);
 	} catch (error) {
 		return;
 	}
@@ -247,7 +247,7 @@ setInterval(async function () {
 		let floating;
 
 		try {
-			floating = await chrome.windows.get(windowId);
+			floating = await browser.windows.get(windowId);
 		} catch (error) {
 			continue;
 		}
@@ -266,7 +266,7 @@ setInterval(async function () {
 			if (floating.state !== "minimized") {
 				minimizedWithBrowOS.push(windowId);
 
-				chrome.windows.update(windowId, { state: "minimized" }).catch(function () {});
+				browser.windows.update(windowId, { state: "minimized" }).catch(function () {});
 			}
 
 			continue;
@@ -277,7 +277,7 @@ setInterval(async function () {
 		if (minimizedWithBrowOS.includes(windowId)) {
 			minimizedWithBrowOS.splice(minimizedWithBrowOS.indexOf(windowId), 1);
 
-			chrome.windows.update(windowId, { state: "normal" }).catch(function () {});
+			browser.windows.update(windowId, { state: "normal" }).catch(function () {});
 
 			continue;
 		}
@@ -300,7 +300,7 @@ setInterval(async function () {
 	}
 }, 250);
 
-chrome.windows.onRemoved.addListener(function (windowId) {
+browser.windows.onRemoved.addListener(function (windowId) {
 	const appId = floatingAppId(windowId);
 
 	if (appId) {
@@ -314,20 +314,20 @@ chrome.windows.onRemoved.addListener(function (windowId) {
 document.addEventListener("visibilitychange", function () {
 	if (document.hidden) {
 		Object.values(floatingWindows).forEach(function (windowId) {
-			chrome.windows
+			browser.windows
 				.get(windowId)
 				.then(function (floating) {
 					if (floating.state !== "minimized") {
 						minimizedWithBrowOS.push(windowId);
 
-						chrome.windows.update(windowId, { state: "minimized" });
+						browser.windows.update(windowId, { state: "minimized" });
 					}
 				})
 				.catch(function () {});
 		});
 	} else {
 		minimizedWithBrowOS.splice(0).forEach(function (windowId) {
-			chrome.windows.update(windowId, { state: "normal" }).catch(function () {});
+			browser.windows.update(windowId, { state: "normal" }).catch(function () {});
 		});
 	}
 });
@@ -336,11 +336,11 @@ document.addEventListener("visibilitychange", function () {
 
 window.addEventListener("pagehide", function () {
 	Object.values(floatingWindows).forEach(function (windowId) {
-		chrome.windows.remove(windowId).catch(function () {});
+		browser.windows.remove(windowId).catch(function () {});
 	});
 });
 
-chrome.windows.getCurrent().then(function (main) {
+browser.windows.getCurrent().then(function (main) {
 	mainWindowId = main.id;
 
 	lastMainBounds = {

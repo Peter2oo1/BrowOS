@@ -14,5 +14,11 @@
 	},
 	"permissions": [
 		"system.memory"
-	]
+	],
+	"browser_specific_settings": {
+		"gecko": {
+			"id": "browos@pedro.local",
+			"strict_min_version": "109.0"
+		}
+	}
 }

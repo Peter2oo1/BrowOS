@@ -244,7 +244,7 @@ let appCursorImage = null;
 
 function cursorImageUrl() {
 	if (cursorSelect.value === "browos") {
-		return chrome.runtime.getURL("cursors/cursor.png");
+		return browser.runtime.getURL("cursors/cursor.png");
 	}
 
 	if (cursorSelect.value === "custom") {

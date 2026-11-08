@@ -38,7 +38,7 @@ function isNewerVersion(latest, current) {
 }
 
 function currentVersion() {
-	return chrome.runtime.getManifest().version;
+	return browser.runtime.getManifest().version;
 }
 
 // the update BrowOS knows about, if it's still newer than this BrowOS
@@ -177,9 +177,10 @@ async function startUpdateReminders() {
 	// store installs update by themselves
 
 	try {
-		const self = await chrome.management.getSelf();
+		const management = globalThis.browser?.management || globalThis.chrome?.management;
+		const self = management ? await management.getSelf() : null;
 
-		if (self.installType === "normal") {
+		if (self && self.installType === "normal") {
 			return;
 		}
 	} catch (error) {

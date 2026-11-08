@@ -79,7 +79,7 @@ function runningTasks() {
 			tag: "Separate window",
 
 			focus: function () {
-				chrome.windows
+				browser.windows
 					.update(windowId, { state: "normal", focused: true })
 					.catch(function () {});
 			},
@@ -158,9 +158,9 @@ function formatGB(bytes) {
 }
 
 function renderMemory() {
-	// only when the browser supports it
+	// only when the browser supports it (Chromium only)
 
-	if (!chrome.system || !chrome.system.memory) {
+	if (typeof chrome === "undefined" || !chrome.system || !chrome.system.memory) {
 		tmMemory.hidden = true;
 
 		return;

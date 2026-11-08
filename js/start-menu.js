@@ -13,7 +13,7 @@ powerButton.addEventListener("click", async function () {
 		return;
 	}
 
-	const currentWindow = await chrome.windows.getCurrent();
+	const currentWindow = await browser.windows.getCurrent();
 
-	await chrome.windows.remove(currentWindow.id);
+	await browser.windows.remove(currentWindow.id);
 });

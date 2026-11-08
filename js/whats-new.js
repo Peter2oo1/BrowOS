@@ -47,7 +47,7 @@ document.addEventListener("keydown", function (event) {
 });
 
 (function () {
-	const current = chrome.runtime.getManifest().version;
+	const current = browser.runtime.getManifest().version;
 	const lastSeen = localStorage.getItem("browos-version");
 
 	// someone who used BrowOS before this window existed (1.0.0) has this saved;
